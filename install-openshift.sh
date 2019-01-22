@@ -23,12 +23,12 @@ if [ "$INTERACTIVE" = "true" ]; then
 
 	read -rp "Openshift Username: ($OCP_USERNAME): " choice;
 	if [ "$choice" != "" ] ; then
-		export USERNAME="$choice";
+		export OCP_USERNAME="$choice";
 	fi
 
 	read -rp "Openshift Password: ($OCP_PASSWORD): " choice;
 	if [ "$choice" != "" ] ; then
-		export PASSWORD="$choice";
+		export OCP_PASSWORD="$choice";
 	fi
 
 	read -rp "OpenShift Version: ($VERSION): " choice;
