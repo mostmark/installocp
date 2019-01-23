@@ -76,6 +76,7 @@ echo "* Your redhat subscription pool ID is $RH_SUB_POOL_ID "
 echo "******"
 
 read -n 1 -s -r -p "Press any key to continue..."
+echo ""
 
 subscription-manager register --username=$RH_USERNAME --password=$RH_PASSWORD
 subscription-manager attach --pool=$RH_SUB_POOL_ID
