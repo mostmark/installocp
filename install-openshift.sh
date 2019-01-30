@@ -9,6 +9,7 @@ export OCP_PASSWORD=${OCP_PASSWORD:=password}
 export VERSION=${VERSION:="3.11"}
 export SCRIPT_REPO=${SCRIPT_REPO:="https://raw.githubusercontent.com/mostmark/installocp/master"}
 export IP=${IP:="$(ip route get 8.8.8.8 | awk '{print $NF; exit}')"}
+export HOSTNAME=${HOSTNAME:="$(hostname)"}
 export API_PORT=${API_PORT:="8443"}
 export RH_USERNAME=${RH_USERNAME:="$(whoami)"}
 export RH_PASSWORD=${RH_PASSWORD:=password}
@@ -35,9 +36,15 @@ if [ "$INTERACTIVE" = "true" ]; then
 	if [ "$choice" != "" ] ; then
 		export VERSION="$choice";
 	fi
+
 	read -rp "IP: ($IP): " choice;
 	if [ "$choice" != "" ] ; then
 		export IP="$choice";
+	fi
+
+	read -rp "HOSTNAME: ($HOSTNAME): " choice;
+	if [ "$choice" != "" ] ; then
+		export HOSTNAME="$choice";
 	fi
 
 	read -rp "API Port: ($API_PORT): " choice;
@@ -67,6 +74,7 @@ fi
 echo "******"
 echo "* Your domain is $DOMAIN "
 echo "* Your IP is $IP "
+echo "* Your HOSTNAME is $HOSTNAME "
 echo "* Your openshift username is $OCP_USERNAME "
 echo "* Your openshift password is $OCP_PASSWORD "
 echo "* OpenShift version: $VERSION "
