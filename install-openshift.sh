@@ -177,7 +177,7 @@ ansible-playbook -i inventory.ini openshift-ansible/playbooks/deploy_cluster.yml
 
 htpasswd -b /etc/origin/master/htpasswd ${OCP_USERNAME} ${OCP_PASSWORD}
 oc login -u system:admin
-oc adm policy add-cluster-role-to-user cluster-admin ${USERNAME}
+oc adm policy add-cluster-role-to-user cluster-admin ${OCP_USERNAME}
 
 echo "******"
 echo "* Your console is https://console.$DOMAIN:$API_PORT"
@@ -189,7 +189,7 @@ echo "*"
 echo "$ oc login -u ${OCP_USERNAME} -p ${OCP_PASSWORD} https://console.$DOMAIN:$API_PORT/"
 echo "******"
 
-oc login -u ${USERNAME} -p ${PASSWORD} https://console.$DOMAIN:$API_PORT/
+oc login -u ${OCP_USERNAME} -p ${OCP_PASSWORD} https://console.$DOMAIN:$API_PORT/
 
 echo ""
 echo "***  END OF INSTALLATION! ***"
