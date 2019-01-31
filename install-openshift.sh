@@ -14,6 +14,8 @@ export API_PORT=${API_PORT:="8443"}
 export RH_USERNAME=${RH_USERNAME:="$(whoami)"}
 export RH_PASSWORD=${RH_PASSWORD:=password}
 export RH_SUB_POOL_ID=${RH_SUB_POOL_ID:=my-pool-id}
+export METRICS="True"
+export LOGGING="False"
 
 ## Make the script interactive to set the variables
 if [ "$INTERACTIVE" = "true" ]; then
@@ -67,6 +69,11 @@ if [ "$INTERACTIVE" = "true" ]; then
 		export RH_SUB_POOL_ID="$choice";
 	fi
 
+	read -rp "Enable Logging (True | False): ($LOGGING): " choice;
+	if [ "$choice" != "" ] ; then
+		export LOGGING="$choice";
+	fi
+
 	echo
 
 fi
@@ -81,10 +88,13 @@ echo "* OpenShift version: $VERSION "
 echo "* Your redhat username is $RH_USERNAME "
 echo "* Your redhat password is $RH_PASSWORD "
 echo "* Your redhat subscription pool ID is $RH_SUB_POOL_ID "
+echo "* Logging enabled is set to $LOGGING "
 echo "******"
 
 read -n 1 -s -r -p "Press any key to continue..."
 echo ""
+
+START_TIME=`date '+%Y-%m-%d %H:%M:%S'`
 
 subscription-manager register --username=$RH_USERNAME --password=$RH_PASSWORD
 subscription-manager attach --pool=$RH_SUB_POOL_ID
@@ -140,17 +150,20 @@ if [ ! -f ~/.ssh/id_rsa ]; then
 	ssh -o StrictHostKeyChecking=no root@$HOSTNAME "pwd" < /dev/null
 fi
 
-export METRICS="True"
-export LOGGING="True"
+
 
 memory=$(cat /proc/meminfo | grep MemTotal | sed "s/MemTotal:[ ]*\([0-9]*\) kB/\1/")
 
+# only enable metrics if enough memory
 if [ "$memory" -lt "4194304" ]; then
 	export METRICS="False"
 fi
 
-if [ "$memory" -lt "16777216" ]; then
-	export LOGGING="False"
+if $LOGGING; then
+	# only enable logging if enough memory
+	if [ "$memory" -lt "16777216" ]; then
+		export LOGGING="False"
+	fi
 fi
 
 curl -o inventory.download $SCRIPT_REPO/inventory.ini
@@ -192,4 +205,7 @@ echo "******"
 oc login -u ${OCP_USERNAME} -p ${OCP_PASSWORD} https://console.$DOMAIN:$API_PORT/
 
 echo ""
+END_TIME=`date '+%Y-%m-%d %H:%M:%S'`
+echo "Starting installation at $START_TIME"
+echo "Finishing installation at $END_TIME"
 echo "***  END OF INSTALLATION! ***"
