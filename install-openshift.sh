@@ -192,6 +192,25 @@ htpasswd -b /etc/origin/master/htpasswd ${OCP_USERNAME} ${OCP_PASSWORD}
 oc login -u system:admin
 oc adm policy add-cluster-role-to-user cluster-admin ${OCP_USERNAME}
 
+if [ "$PVS" = "true" ]; then
+
+	curl -o vol.yaml $SCRIPT_REPO/vol.yaml
+
+	for i in `seq 1 200`;
+	do
+		DIRNAME="vol$i"
+		mkdir -p /mnt/data/$DIRNAME 
+		chcon -Rt svirt_sandbox_file_t /mnt/data/$DIRNAME
+		chmod 777 /mnt/data/$DIRNAME
+		
+		sed "s/name: vol/name: vol$i/g" vol.yaml > oc_vol.yaml
+		sed -i "s/path: \/mnt\/data\/vol/path: \/mnt\/data\/vol$i/g" oc_vol.yaml
+		oc create -f oc_vol.yaml
+		echo "created volume $i"
+	done
+	rm oc_vol.yaml
+fi
+
 echo "******"
 echo "* Your console is https://console.$DOMAIN:$API_PORT"
 echo "* Your username is $OCP_USERNAME "
