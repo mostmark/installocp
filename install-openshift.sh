@@ -69,9 +69,14 @@ if [ "$INTERACTIVE" = "true" ]; then
 		export RH_SUB_POOL_ID="$choice";
 	fi
 
-	read -rp "Enable Logging (True | False): ($LOGGING): " choice;
+	read -rp "Enable Logging (true | false): ($LOGGING): " choice;
 	if [ "$choice" != "" ] ; then
 		export LOGGING="$choice";
+	fi
+	
+	read -rp "Create Persistent Volumes (true | false): ($PVS): " choice;
+	if [ "$choice" != "" ] ; then
+		export PVS="$choice";
 	fi
 
 	echo
@@ -89,6 +94,7 @@ echo "* Your redhat username is $RH_USERNAME "
 echo "* Your redhat password is $RH_PASSWORD "
 echo "* Your redhat subscription pool ID is $RH_SUB_POOL_ID "
 echo "* Logging enabled is set to $LOGGING "
+echo "* Persistent volumes is set to $PVS "
 echo "******"
 
 read -n 1 -s -r -p "Press any key to continue..."
